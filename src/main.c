@@ -1,7 +1,7 @@
 #include "../platform/MKL25Z4/include/MKL25Z4.h"
 #include "standard.h"
 
-#define LED_POS 19
+#define LED_POS 18
 #define LED_PORT PORTB
 #define LED_GPIO PTB
 

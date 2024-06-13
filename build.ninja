@@ -1,8 +1,8 @@
-cflags = -Wall -Icore -mcpu=cortex-m0plus --specs=nosys.specs -mthumb -ffunction-sections -fdata-sections -fmessage-length=0 -mfloat-abi=soft
+cflags = -Wall -Icore -mcpu=cortex-m0plus --specs=nosys.specs -mthumb -ffunction-sections -fdata-sections -fmessage-length=0 -mfloat-abi=soft -Iplatform/MKL25Z4/include -DCPU_MKL25Z128VFM4=1
 libs = -I./deps
 
 rule cc
-  command = arm-none-eabi-gcc $cflags $libs -DCPU_MKL25Z128VFM4=1 -c $in -o $out
+  command = arm-none-eabi-gcc $cflags $libs -c $in -o $out
 
 rule pack
   command = arm-none-eabi-gcc-ar -r $out $in
@@ -14,39 +14,21 @@ rule tobinary
   command = arm-none-eabi-objcopy -O binary $in $out
 
 rule flash
-  command = powershell.exe -ExecutionPolicy Bypass -File copy_to_e.ps1 -SourceFile $in -DestinationDrive E:
-  description = Copying binary to E:/
+  command = powershell.exe -ExecutionPolicy Bypass -File copy_to_mcu.ps1 -SourceFile $in -DestinationDrive E:
+  description = Copying binary to MCU
 
 rule clean
   command = rm -rf build/*
   description = Cleaning build files
-
-# 1 - Build main files
-build build/main.o : cc src/main.c
 build build/standard.o : cc src/standard.c
-
-# 2 - Build platform definition and startup files
+build build/main.o : cc src/main.c
 build build/system_MKL25Z4.o : cc platform/system_MKL25Z4.c
 build build/startup.o : cc platform/startup.c
 build build/startup_MKL25Z4.o : cc platform/MKL25Z4/startup/gcc/startup_MKL25Z4.S
-
-# 3 - Create startup library
 build build/lib_MKL25Z4.a : pack build/startup.o build/system_MKL25Z4.o build/startup_MKL25Z4.o
-
-# 4 - Link all in a .elf file
-build build/main.elf : link build/lib_MKL25Z4.a build/main.o build/standard.o
-
-# 5 - Convert the .elf into a raw binary file that can be drag'n'drop on the board (with OpenSDA mass-storage bootloader)
+build build/main.elf : link build/standard.o build/main.o build/startup.o build/system_MKL25Z4.o build/startup_MKL25Z4.o build/lib_MKL25Z4.a
 build build/main.bin : tobinary build/main.elf
-
-# 6 - Flash
 build flash : flash build/main.bin
-
-# Clean
 build clean: clean
-
-# Rebuild (clean and then build all)
-build rebuild: phony clean all
-
-# Default target
+build rebuild: phony clean build/main.bin
 default build/main.bin
