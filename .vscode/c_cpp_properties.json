@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/Applications/ArmGNUToolchain/12.3.rel1/arm-none-eabi/include",
+                "/Users/tristan.commons/NXP/SDK_2_2_0_FRDM-KL25Z/devices/MKL25Z4",
+                "/Users/tristan.commons/NXP/SDK_2_2_0_FRDM-KL25Z/CMSIS/Include"
+            ],
+            "defines": [],
+            "macFrameworkPath": [
+                "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
+            ],
+            "compilerPath": "/Applications/ArmGNUToolchain/12.3.rel1/arm-none-eabi/bin//arm-none-eabi-gcc",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-arm"
+        }
+    ],
+    "version": 4
+}
