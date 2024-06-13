@@ -1,0 +1,35 @@
+# Ignore all files in the build directory
+/build/*
+
+# Ignore object files and archives
+*.o
+*.a
+*.out
+*.exe
+
+# Ignore temporary files
+*.tmp
+*.log
+*.bak
+*.swp
+
+# Ignore editor and IDE configuration files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Ignore Python bytecode
+__pycache__/
+*.pyc
+
+# Ignore compiled dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Ignore MacOS specific files
+.DS_Store
+
+# Ignore Windows specific files
+Thumbs.db

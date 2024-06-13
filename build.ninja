@@ -1,9 +1,6 @@
 cflags = -Wall -Icore -mcpu=cortex-m0plus --specs=nosys.specs -mthumb -ffunction-sections -fdata-sections -fmessage-length=0 -mfloat-abi=soft
 libs = -I./deps
 
-rule cpp
-  command = arm-none-eabi-g++ $cflags $libs -DCPU_MKL25Z128VFM4=1 -c $in -o $out
-
 rule cc
   command = arm-none-eabi-gcc $cflags $libs -DCPU_MKL25Z128VFM4=1 -c $in -o $out
 
@@ -24,8 +21,9 @@ rule clean
   command = rm -rf build/*
   description = Cleaning build files
 
-# 1 - Build main file
-build build/main.o : cc main/main.c
+# 1 - Build main files
+build build/main.o : cc src/main.c
+build build/standard.o : cc src/standard.c
 
 # 2 - Build platform definition and startup files
 build build/system_MKL25Z4.o : cc platform/system_MKL25Z4.c
@@ -36,7 +34,7 @@ build build/startup_MKL25Z4.o : cc platform/MKL25Z4/startup/gcc/startup_MKL25Z4.
 build build/lib_MKL25Z4.a : pack build/startup.o build/system_MKL25Z4.o build/startup_MKL25Z4.o
 
 # 4 - Link all in a .elf file
-build build/main.elf : link build/main.o build/lib_MKL25Z4.a
+build build/main.elf : link build/lib_MKL25Z4.a build/main.o build/standard.o
 
 # 5 - Convert the .elf into a raw binary file that can be drag'n'drop on the board (with OpenSDA mass-storage bootloader)
 build build/main.bin : tobinary build/main.elf
