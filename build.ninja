@@ -17,7 +17,8 @@ rule tobinary
   command = arm-none-eabi-objcopy -O binary $in $out
 
 rule flash
-  command = sudo openocd -f openocd.cfg -c "program $in verify reset exit"
+  command = powershell.exe -ExecutionPolicy Bypass -File copy_to_e.ps1 -SourceFile $in -DestinationDrive E:
+  description = Copying binary to E:/
 
 rule clean
   command = rm -rf build/*
