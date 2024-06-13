@@ -33,3 +33,5 @@ __pycache__/
 
 # Ignore Windows specific files
 Thumbs.db
+
+.ninja_log
