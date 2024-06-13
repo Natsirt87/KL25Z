@@ -1,8 +1,5 @@
-/*
-    Super simple program that blinks the on-board RGB led red with intervals of 1 second.
-*/
-
-#include "MKL25Z4.h"
+#include "stdint.h"
+#include "../platform/MKL25Z4/include/MKL25Z4.h"
 
 #define RED_LED_POS 18
 
