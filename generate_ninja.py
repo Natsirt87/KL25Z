@@ -4,12 +4,13 @@ src_dir = "src"
 platform_dir = "platform"
 build_dir = "build"
 platform_mkl25z4_dir = "platform/MKL25Z4/startup/gcc"
+include_dir = "include"
 output_file = "build.ninja"
 
 cflags = (
     "-Wall -Icore -mcpu=cortex-m0plus --specs=nosys.specs -mthumb "
     "-ffunction-sections -fdata-sections -fmessage-length=0 -mfloat-abi=soft "
-    "-Iplatform/MKL25Z4/include -DCPU_MKL25Z128VFM4=1"
+    "-Iplatform/MKL25Z4/include -Iinclude -DCPU_MKL25Z128VFM4=1"
 )
 libs = "-I./deps"
 
@@ -41,12 +42,20 @@ def generate_ninja_file():
         f.write(f"libs = {libs}\n")
         f.write(rules)
 
+        # Get all header files in the include directory
+        header_files = [
+            os.path.join(include_dir, header_file)
+            for header_file in os.listdir(include_dir)
+            if header_file.endswith(".h")
+        ]
+        header_files_str = " ".join(header_files)
+
         # Compile src/*.c files
         for src_file in os.listdir(src_dir):
             if src_file.endswith(".c"):
                 obj_file = os.path.join(build_dir, f"{os.path.splitext(src_file)[0]}.o")
                 src_file_path = os.path.join(src_dir, src_file)
-                f.write(f"build {obj_file} : cc {src_file_path}\n")
+                f.write(f"build {obj_file} : cc {src_file_path} | {header_files_str}\n")
 
         # Compile platform/*.c files
         platform_files = ["system_MKL25Z4.c", "startup.c"]

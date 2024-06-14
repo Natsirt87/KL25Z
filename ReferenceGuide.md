@@ -1,41 +1,6 @@
-# KL-25Z Development Guide
+# KL25Z Reference Guide
+This is meant to be a quick, practical reference guide for CMSIS development on the FRDM-KL25Z board. It will not delve too deep into the underlying functionality and theory behind the concepts, but will give enough explanation to be understandable and applicable in a real program. This guide assumes a general understanding of each concept, but not exactly how to apply and use it on this board.
 ## Pin Initialization
-### Summary/Quick Start
-Steps to initialize a pin:
-1. Enable the clock signal to the PORT module that contains the pin
-2. Set the PCR configuration for that pin (multiplexer, pull-up register, etc.)
-3. Module-specific configuration, e.g. set the data direction for GPIO
-
-Example using GPIO:
-
-```c
-
-#define INPUT_SHIFT 4
-#define OUTPUT_SHIFT 10
-
-#define MASK(x) (1UL << x)
-
-int main(void) 
-{
-  // Enable clock for Port A & Port C
-  SIM->SCGC5 |= SIM_SCGC5_PORTA_MASK | SIM_SCGC5_PORTC_MASK;
-
-  // Set pins to use GPIO (multiplexer setting 1)
-  PORTA->PCR(INPUT_SHIFT) |= PORT_PCR_MUX(1);
-  PORTC->PCR(OUTPUT_SHIFT) |= PORT_PCR_MUX(1);
-
-  // Extra configuration, enable pull-up resistor for input pin
-  // PE: Pull-resistor enable
-  // PS: Pull-resistor select (1 = pull-up)
-  PORTA->PCR(INPUT_SHIFT) |= PORT_PCR_PE_MASK | PORT_PCR_PS_MASK;
-
-  // Set GPIO data directions for input & output
-  PTA->PDDR &= ~MASK(INPUT_SHIFT);
-  PTB->PDDR |= MASK(OUTPUT_SHIFT);
-}
-
-```
-
 ### Clock Gating
 For a peripheral to work, you must first enable the clock signal to that peripheral module.
 This is done through the SIM->SCGC (System Clock Gating Control) registers.
@@ -82,10 +47,10 @@ This is an example of setting up PCR:\
 `PORTA->PCR[4] |= PORT_PCR_MUX(1) | PORT_PCR_PE_MASK | PORT_PCR_PS_MASK`\
 This sets the pin as GPIO, enables the pull resistor, and sets the pull resistor direction to up.
 
-### Module specific intialization
+### Peripheral specific intialization
 After giving the pin a multiplexer setting through its PCR, it will be connected to a certain peripheral module (or none if the setting is 0, in which case you're done).
 
-Initializing the pin for the module it's connected to is different for each module, refer to a specific module's section to see initialization details.
+Initializing the pin for the peripheral it's connected to is different for each peripheral, refer to a specific peripheral's section to see initialization details.
 
 
 ## GPIO
@@ -117,3 +82,84 @@ PTA->PSOR |= MASK(5);
 PTA->PCOR |= MASK(6);
 PTA->PTOR |= MASK(7);
 ```
+
+## Interrupts
+### Initialization
+There are 3 main steps to initialize interrupts for a specific use case.
+
+**Peripheral**\
+First, you must configure a peripheral to generate interrupt requests. This varies between peripherals, and generally includes deciding under what exact conditions the interrupt will trigger.
+
+Here is how you configure common peripherals to generate interrupts:
+
+*GPIO*
+```c
+// Tells PORTD to generate an interrupt from pin 5, based on condition code 9
+/*
+Condition codes for PCR:
+8: When logic 0
+9: On rising edge
+10: on falling edge
+11: on either edge
+12: when logic one
+*/
+PORTD->PCR[5] |= PORT_PCR_IRQC(9);
+```
+
+*PIT*
+```c
+// TODO: Add other peripherals here as I learn how to generate interrupts
+```
+
+**NVIC**\
+Next, the NVIC (Nested Vectored Interrupt Controller) must be configured to enable the corresponding interrupt source. The priority of the source can also be adjusted
+
+```c
+// Interrupt sources correspond to the peripheral that you configured in the first step
+// You can see the definitions of all interrupt sources in the IRQn enum in the MKL25Z4.h header file
+NVIC_EnableIRQ(PORTD_IRQn);
+
+// Priority can be set from 0-3
+NVIC_SetPriority(PORTD_IRQn, 1);
+
+// Optional, ensure interrupts are enabled & there are none pending
+NVIC_ClearPendingIRQ(PORTD_IRQn);
+__enable_irq();
+```
+
+**Processor**\
+This step is optional in most cases, but the processor itself also has the ability to enable or disable interrupts. On reset interrupts are enabled, but in a more complex program it is a good idea to make sure they're enabled when configuring them for a specific case.
+
+```c
+// Enables interrupts across the whole processor, in case they were disabled previously (for a critical section)
+__enable_irq();
+```
+&nbsp;
+
+### Operation
+Once initialized, an interrupt must have a function that runs when it's generated, called an ISR (Interrupt Service Routine). The ISR must be named in a specific way so the processor knows to run it: `PERIPHERAL_IRQHandler`. The `PERIPHERAL` section is the same as the first half of the interrupt source name you gave when enabling it (e.g. `PORTD`).
+
+The ISR takes no parameters, and will trigger when the condition for the peripheral is met for any part of the peripheral. So, within the ISR, you should check which exact pin/channel/part of the peripheral generated the interrupt so that the code can react to exactly what happened. How to do this varies between peripherals.
+
+Once the ISR is done with it's logic, you must clear the ISF (Interrupt Status Flags) for the peripheral that generated the interrupt. This tells the processor that the interrupt has been handled and it should not run the ISR again. The exact method changes depending on the peripheral.
+
+Here is an example ISR for GPIO:
+
+```c
+void PORTD_IRQHandler(void)
+{
+    if (PORTD->ISFR & MASK(5))
+    {
+        // PTD5 generated the interrupt
+    }
+
+    if (PORTD->ISFR & MASK(2))
+    {
+        // PTD2 generated the interrupt
+    }
+
+    // Clear the Interrupt Status Flag Register
+    PORTD->ISFR = 0xffffffff;
+}
+```
+

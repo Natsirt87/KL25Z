@@ -1,4 +1,4 @@
-cflags = -Wall -Icore -mcpu=cortex-m0plus --specs=nosys.specs -mthumb -ffunction-sections -fdata-sections -fmessage-length=0 -mfloat-abi=soft -Iplatform/MKL25Z4/include -DCPU_MKL25Z128VFM4=1
+cflags = -Wall -Icore -mcpu=cortex-m0plus --specs=nosys.specs -mthumb -ffunction-sections -fdata-sections -fmessage-length=0 -mfloat-abi=soft -Iplatform/MKL25Z4/include -Iinclude -DCPU_MKL25Z128VFM4=1
 libs = -I./deps
 
 rule cc
@@ -20,13 +20,16 @@ rule flash
 rule clean
   command = rm -rf build/*
   description = Cleaning build files
-build build/standard.o : cc src/standard.c
-build build/main.o : cc src/main.c
+build build/tasks.o : cc src/tasks.c | include/systick.h include/pin_config.h include/scheduler.h include/util.h include/tasks.h
+build build/systick.o : cc src/systick.c | include/systick.h include/pin_config.h include/scheduler.h include/util.h include/tasks.h
+build build/util.o : cc src/util.c | include/systick.h include/pin_config.h include/scheduler.h include/util.h include/tasks.h
+build build/scheduler.o : cc src/scheduler.c | include/systick.h include/pin_config.h include/scheduler.h include/util.h include/tasks.h
+build build/main.o : cc src/main.c | include/systick.h include/pin_config.h include/scheduler.h include/util.h include/tasks.h
 build build/system_MKL25Z4.o : cc platform/system_MKL25Z4.c
 build build/startup.o : cc platform/startup.c
 build build/startup_MKL25Z4.o : cc platform/MKL25Z4/startup/gcc/startup_MKL25Z4.S
 build build/lib_MKL25Z4.a : pack build/startup.o build/system_MKL25Z4.o build/startup_MKL25Z4.o
-build build/main.elf : link build/standard.o build/main.o build/startup.o build/system_MKL25Z4.o build/startup_MKL25Z4.o build/lib_MKL25Z4.a
+build build/main.elf : link build/tasks.o build/systick.o build/util.o build/scheduler.o build/main.o build/startup.o build/system_MKL25Z4.o build/startup_MKL25Z4.o build/lib_MKL25Z4.a
 build build/main.bin : tobinary build/main.elf
 build flash : flash build/main.bin
 build clean: clean

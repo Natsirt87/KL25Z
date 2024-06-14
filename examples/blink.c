@@ -1,8 +1,8 @@
 #include "../platform/MKL25Z4/include/MKL25Z4.h"
 
-#define LED_POS 18
-#define LED_PORT PORTB
-#define LED_GPIO PTB
+#define LED_POS 1
+#define LED_PORT PORTD
+#define LED_GPIO PTD
 
 #define MASK(x) (1UL << x)
 
@@ -10,7 +10,7 @@ void Delay(uint32_t time_del);
 
 void init(void) {
     // Enable clocks to ports
-    SIM->SCGC5 |= SIM_SCGC5_PORTB_MASK;
+    SIM->SCGC5 |= SIM_SCGC5_PORTB_MASK | SIM_SCGC5_PORTD_MASK;
 
     LED_PORT->PCR[LED_POS] |= PORT_PCR_MUX(1);
 
@@ -30,8 +30,7 @@ int main(void) {
     return 0;
 }
 
-void Delay(uint32_t timeDelay)
-{
+void Delay(uint32_t timeDelay) {
     volatile int n;
     while (timeDelay--)
     {
