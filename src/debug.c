@@ -1,5 +1,8 @@
-#include "../platform/MKL25Z4/include/MKL25Z4.h";
+#include "../platform/MKL25Z4/include/MKL25Z4.h"
 #include "util.h"
+
+#include <stdarg.h>
+#include <stdint.h>
 
 #define UART_OVERSAMPLE_RATE 16
 #define SYS_CLOCK 48e6
@@ -16,11 +19,16 @@ void Debug_Init(uint32_t baud_rate) {
     
     // Set baud rate registers
     // 57600 Baud assuming a fixed system clock and oversampling rate
-    UART0->BDH = 0x00;
-    UART0->BDL = 0x17;
+    /* UART0->BDH = 0x00;
+    UART0->BDL = 0x17; */
+
+    uint16_t sbr = (uint16_t) (SystemCoreClock / (baud_rate * UART_OVERSAMPLE_RATE));
+    UART0->BDH &= ~UART0_BDH_SBR_MASK;
+    UART0->BDH |= UART0_BDH_SBR(sbr >> 8);
+    UART0->BDL = UART0_BDL_SBR(sbr);
     
     // Set over-sampling ratio
-    UART0->C4 = UART0_C4_OSR(15);
+    UART0->C4 = UART0_C4_OSR(UART_OVERSAMPLE_RATE - 1);
     
     // Set UART to 8-N-1
     UART0->C1 = 0x00;
@@ -53,4 +61,54 @@ void Debug_Print(const char *str) {
         __enable_irq();
         str++;
     }
+}
+
+void Debug_Printf(const char* format, ...) {
+    char buffer[256]; // Assuming a maximum buffer size of 256
+    char* buf_ptr = buffer;
+    const char* str_ptr = format;
+    va_list args;
+    va_start(args, format);
+
+    while (*str_ptr != '\0') {
+        if (*str_ptr == '%') {
+            str_ptr++;
+            switch (*str_ptr) {
+                case 'd': {
+                    int value = va_arg(args, int);
+                    char temp[32];
+                    itoa(value, temp, 10);
+                    char* temp_ptr = temp;
+                    while (*temp_ptr) {
+                        *buf_ptr++ = *temp_ptr++;
+                    }
+                    break;
+                }
+                case 's': {
+                    const char* value = va_arg(args, const char*);
+                    while (*value) {
+                        *buf_ptr++ = *value++;
+                    }
+                    break;
+                }
+                case 'c': {
+                    char value = (char) va_arg(args, int);
+                    *buf_ptr++ = value;
+                    break;
+                }
+                default:
+                    *buf_ptr++ = '%';
+                    *buf_ptr++ = *str_ptr;
+                    break;
+            }
+        } else {
+            *buf_ptr++ = *str_ptr;
+        }
+        str_ptr++;
+    }
+    *buf_ptr = '\0';
+    va_end(args);
+
+    // Call Debug_Print with the formatted string
+    Debug_Print(buffer);
 }

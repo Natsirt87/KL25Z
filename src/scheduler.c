@@ -1,5 +1,6 @@
 #include "scheduler.h"
 #include "systick.h"
+#include "tasks.h"
 
 static task_t tasks[MAX_TASKS];
 static uint8_t task_count = 0;
