@@ -4,7 +4,7 @@ This is an educational and exploratory project for embedded systems learning in 
 
 ## Running the project
 
-The build system is custom developed, and integrates the GNU ARM GCC toolchain with the NXP SDK and a ninja build file generator.
+The build system is custom and based on Overdriver's implementation (https://github.com/Overdrivr/bare-metal-build-kl25z)[here]. It integrates the GNU ARM GCC toolchain with the NXP SDK and a ninja build file generator.
 
 To build the project, first make sure you have the latest versions of `arm-none-eabi-gcc` and `ninja` installed.
 Then run `python3 generate_ninja.py` to generate the build script. Run `ninja` to build, and run `ninja flash` to copy the binary to the E drive, assuming that's where the KL25Z board is mounted. If it's mounted somewhere else, change the powershell script `copy_to_mcu.ps1` to reflect that.

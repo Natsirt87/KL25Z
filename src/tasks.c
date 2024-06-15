@@ -1,6 +1,7 @@
 #include "../platform/MKL25Z4/include/MKL25Z4.h";
 #include "tasks.h"
 #include "util.h"
+#include "debug.h"
 
 void Task_Sequence(void) {
     // Finite state machine, performs one state at a time then returns
@@ -10,16 +11,19 @@ void Task_Sequence(void) {
     {
         case ST_RED:
             Util_Control_Onboard_LED(1, 0, 0);
+            Debug_Print("Stage RED\r\n");
             Schedule_Delay(1200);
             state = ST_GREEN;
             break;
         case ST_GREEN:
             Util_Control_Onboard_LED(0, 1, 0);
+            Debug_Print("Stage GREEN\r\n");
             Schedule_Delay(1200);
             state = ST_BLUE;
             break;
         case ST_BLUE:
             Util_Control_Onboard_LED(0, 0, 1);
+            Debug_Print("Stage BLUE\r\n");
             Schedule_Delay(1200);
             state = ST_RED;
             break;

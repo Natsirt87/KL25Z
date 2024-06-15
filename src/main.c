@@ -4,6 +4,7 @@
 #include "util.h"
 #include "scheduler.h"
 #include "tasks.h"
+#include "debug.h"
 
 void GPIO_Init(void) {
     // Enable clock
@@ -40,8 +41,7 @@ int main(void) {
 
     SystemCoreClockUpdate();
     Systick_Init(SystemCoreClock / 1000); // 1ms tick
-
-    
+    Debug_Init(57600);
 
     // scheduler init
     Scheduler_Init();

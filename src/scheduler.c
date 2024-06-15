@@ -45,9 +45,4 @@ void Scheduler_Run(void) {
 void Schedule_Delay(uint32_t ms) {
     tasks[current_task].delay = ms;
     tasks[current_task].state = TASK_WAITING;
-    yield();
-}
-
-void yield(void) {
-    // Intentionally empty, used for cooperative multitasking to yield control
 }
