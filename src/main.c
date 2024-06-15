@@ -1,5 +1,4 @@
 #include "../platform/MKL25Z4/include/MKL25Z4.h"
-#include "../platform/mcg.h"
 #include "pin_config.h"
 #include "systick.h"
 #include "util.h"
