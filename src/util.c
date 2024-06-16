@@ -3,7 +3,7 @@
 #include "util.h"
 #include "pin_config.h"
 
-void Util_Init_Onboard_LED(void) {
+void Util_InitOnboardLED(void) {
     // Enable clock for onboard led ports
     SIM->SCGC5 |= SIM_SCGC5_PORTB_MASK | SIM_SCGC5_PORTD_MASK;
 
@@ -17,7 +17,7 @@ void Util_Init_Onboard_LED(void) {
     PTD->PDDR |= MASK(BLUE_ONBOARD_LED_POS);
 }
 
-void Util_Control_Onboard_LED(uint8_t r, uint8_t g, uint8_t b) {
+void Util_ControlOnboardLED(uint8_t r, uint8_t g, uint8_t b) {
     // Onboard LED is in active-low configuration, so clearing a bit turns it on
     if (r)
         PTB->PCOR |= MASK(RED_ONBOARD_LED_POS);

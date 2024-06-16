@@ -1,8 +1,8 @@
 typedef structs: my_struct_t
 typedef enums: my_enum_t
 enum members: FIRST_MEMBER
-public functions: Modulename_Do_Something_For_Fun()
-private functions: Do_Something_For_The_Module()
+public functions: Modulename_DoSomethingForFun()
+private functions: DoSomethingForTheModule()
 local variables: my_local_variable
 global variables: g_my_global_variable
 static variables: my_static_variable

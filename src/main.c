@@ -56,18 +56,18 @@ int main(void) {
     Interrupt_Init();
 
     Debug_Init(57600);
-    Util_Init_Onboard_LED();
+    Util_InitOnboardLED();
 
     // Intialize onboard LED to off
-    Util_Control_Onboard_LED(0, 0, 0);
+    Util_ControlOnboardLED(0, 0, 0);
     Debug_Printf("System core clock: %d \r\n", SystemCoreClock);
 
     // scheduler init
     Scheduler_Init();
 
     // add scheduler tasks
-    Scheduler_Add_Task(TASK_SEQUENCE);
-    Scheduler_Add_Task(TASK_FLASH);
+    Scheduler_AddTask(TASK_SEQUENCE);
+    Scheduler_AddTask(TASK_FLASH);
 
     // run scheduler
     Scheduler_Run();

@@ -23,8 +23,8 @@ typedef struct {
 } task_t;
 
 void Scheduler_Init(void);
-void Scheduler_Add_Task(task_id_t task_id);
+void Scheduler_AddTask(task_id_t task_id);
 void Scheduler_Run(void);
-void Schedule_Delay(uint32_t ms);
+void Scheduler_Delay(uint32_t ms);
 
 #endif

@@ -20,6 +20,6 @@ void Systick_Init(uint32_t time_value) {
 
 }
 
-uint32_t Systick_Get_Ticks(void) {
+uint32_t Systick_GetTicks(void) {
     return tick_count;
 }

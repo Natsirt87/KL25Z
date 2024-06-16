@@ -11,7 +11,7 @@ void Scheduler_Init(void) {
     current_task = 0;
 }
 
-void Scheduler_Add_Task(task_id_t task_id) {
+void Scheduler_AddTask(task_id_t task_id) {
     if (task_count < MAX_TASKS) {
         tasks[task_count].task_id = task_id;
         tasks[task_count].state = TASK_READY;
@@ -25,7 +25,7 @@ void Scheduler_Run(void) {
     uint32_t current_time;
 
     while (1) {
-        current_time = Systick_Get_Ticks();
+        current_time = Systick_GetTicks();
 
         for (current_task = 0; current_task < task_count; current_task++) {
 
@@ -43,7 +43,7 @@ void Scheduler_Run(void) {
     }
 }
 
-void Schedule_Delay(uint32_t ms) {
+void Scheduler_Delay(uint32_t ms) {
     tasks[current_task].delay = ms;
     tasks[current_task].state = TASK_WAITING;
 }

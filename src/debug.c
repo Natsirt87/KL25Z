@@ -1,3 +1,8 @@
+/*
+    Utility module for debug operations, such as writing out to the console (represented by a serial connection to the host computer).
+    Include any other debug-related functions in the future.
+*/
+
 #include "../platform/MKL25Z4/include/MKL25Z4.h"
 #include "util.h"
 

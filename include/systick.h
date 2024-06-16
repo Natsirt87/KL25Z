@@ -4,6 +4,6 @@
 #include <stdint.h>
 
 void Systick_Init(uint32_t ticks);
-uint32_t Systick_Get_Ticks(void);
+uint32_t Systick_GetTicks(void);
 
 #endif
