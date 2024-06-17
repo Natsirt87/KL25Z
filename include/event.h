@@ -1,23 +1,23 @@
 // Definitions for event type
+#include <stdint.h>
+#include <stdbool.h>
 
-/* typedef enum {
+typedef enum {
     EVENT_NONE,
-    EVENT_SENSOR_READ,
-    EVENT_FLAG,
-    EVENT_INT,
-    // Add more event types as needed
+    EVENT_BTN_MODE,
+    EVENT_BTN_TIMING,
+    EVENT_SENSOR_READ
 } event_id_t;
 
 typedef struct {
-    event_ide_t id;
+    event_id_t id;
     union {
+        // Each possible field is named after the corresponding event id
+        bool btn_mode; // true = flash, false = sequence
+        bool btn_timing; // true = fast, false = slow
         struct {
             uint32_t sensor_data1;
             uint32_t sensor_data2;
-            // Add more sensor data fields as needed
         } sensor_read;
-        uint8_t flag;
-        int value;
-        // Add more data types as needed
     } data;
-} event_t; */
+} event_t;

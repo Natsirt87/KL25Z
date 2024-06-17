@@ -1,8 +1,7 @@
 #include "scheduler.h"
 #include "systick.h"
-#include "tasks.h"
 
-static task_t tasks[MAX_TASKS];
+static scheduled_task_t tasks[MAX_TASKS];
 static uint8_t task_count = 0;
 static uint8_t current_task = 0;
 
@@ -29,12 +28,14 @@ void Scheduler_Run(void) {
 
         for (current_task = 0; current_task < task_count; current_task++) {
 
+            // If task is waiting, check for how long & move it to ready if delay has elapsed
             if (tasks[current_task].state == TASK_WAITING) {
                 if (current_time - tasks[current_task].last_run >= tasks[current_task].delay) {
                     tasks[current_task].state = TASK_READY;
                 }
             } 
 
+            // Execute ready task & update last run time
             if (tasks[current_task].state == TASK_READY) {
                 Task_Execute(tasks[current_task].task_id);
                 tasks[current_task].last_run = current_time;

@@ -2,13 +2,9 @@
 #define SCHEDULER_H
 
 #include <stdint.h>
+#include "task.h"
 
 #define MAX_TASKS 5
-
-typedef enum {
-    TASK_FLASH,
-    TASK_SEQUENCE
-} task_id_t;
 
 typedef enum {
     TASK_READY,
@@ -20,7 +16,7 @@ typedef struct {
     task_state_t state;
     uint32_t last_run;
     uint32_t delay;
-} task_t;
+} scheduled_task_t;
 
 void Scheduler_Init(void);
 void Scheduler_AddTask(task_id_t task_id);

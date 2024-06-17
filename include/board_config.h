@@ -1,3 +1,7 @@
+/*
+    Contains definitions for all pin & board related configuration data.
+*/
+
 #ifndef PIN_CONFIG_H
 #define PIN_CONFIG_H
 

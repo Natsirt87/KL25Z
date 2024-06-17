@@ -22,11 +22,7 @@ void Debug_Init(uint32_t baud_rate) {
     // Disable UART0 while changing configurations
     UART0->C2 = 0;
     
-    // Set baud rate registers
-    // 57600 Baud assuming a fixed system clock and oversampling rate
-    /* UART0->BDH = 0x00;
-    UART0->BDL = 0x17; */
-
+    // Calculate & set baud rate
     uint16_t sbr = (uint16_t) (SystemCoreClock / (baud_rate * UART_OVERSAMPLE_RATE));
     UART0->BDH &= ~UART0_BDH_SBR_MASK;
     UART0->BDH |= UART0_BDH_SBR(sbr >> 8);

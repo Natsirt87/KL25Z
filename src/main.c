@@ -1,9 +1,9 @@
 #include "../platform/MKL25Z4/include/MKL25Z4.h"
-#include "pin_config.h"
+#include "board_config.h"
 #include "systick.h"
 #include "util.h"
 #include "scheduler.h"
-#include "tasks.h"
+#include "task.h"
 #include "debug.h"
 
 void GPIO_Init(void) {
@@ -36,8 +36,7 @@ void Clock_Init(void) {
     MCG->C1 |= MCG_C1_CLKS(0);  // Select PLL/FLL as clock source
      
     // MCG_C1: IREFS (bit 2)  = 1
-    MCG->C1 |= MCG_C1_IREFS(1); // Select Inernal Reference clock
-                                // source for FLL
+    MCG->C1 |= MCG_C1_IREFS(1); // Select Inernal Reference clock source for FLL
      
     // MCG_C4: DRST_DRS (bit 6-5) = 01
     MCG->C4 |= MCG_C4_DRST_DRS(1); // Select DCO range as Mid range
@@ -48,9 +47,11 @@ void Clock_Init(void) {
 }
 
 int main(void) {
+    // Clock & system tick initialization
     Clock_Init();
     SystemCoreClockUpdate();
     Systick_Init(SystemCoreClock / 1000); // 1ms tick
+
 
     GPIO_Init();
     Interrupt_Init();
@@ -58,18 +59,17 @@ int main(void) {
     Debug_Init(57600);
     Util_InitOnboardLED();
 
-    // Intialize onboard LED to off
+    // Intialize onboard LED to off & print current system clock speed
     Util_ControlOnboardLED(0, 0, 0);
     Debug_Printf("System core clock: %d \r\n", SystemCoreClock);
 
-    // scheduler init
+    // Scheduler initialization & setup
+
     Scheduler_Init();
 
-    // add scheduler tasks
     Scheduler_AddTask(TASK_SEQUENCE);
     Scheduler_AddTask(TASK_FLASH);
 
-    // run scheduler
     Scheduler_Run();
 
     return 0;

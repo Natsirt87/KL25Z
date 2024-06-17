@@ -1,7 +1,6 @@
 #include "../platform/MKL25Z4/include/MKL25Z4.h"
-
 #include "util.h"
-#include "pin_config.h"
+#include "board_config.h"
 
 void Util_InitOnboardLED(void) {
     // Enable clock for onboard led ports

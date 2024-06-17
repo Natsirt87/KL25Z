@@ -1,15 +1,33 @@
 #include "../platform/MKL25Z4/include/MKL25Z4.h";
-#include "tasks.h"
+#include "task.h"
 #include "util.h"
 #include "debug.h"
 
+static event_buffer_t event_buffers[NUM_TASKS];
 
 void Task_Sequence(void) {
     // Finite state machine, performs one state at a time then returns
     static enum {ST_RED, ST_GREEN, ST_BLUE} state;
+    static bool mode_sequence = false;
+    
+    event_t received_event;
 
     // Read each event in event buffer
     // Switch on event id, read data accordingly & perform action
+    // Set mode_sequence here
+    while(Task_ReadEvent(TASK_SEQUENCE, &received_event)) {
+        switch (received_event.id) {
+            case EVENT_BTN_MODE:
+                mode_sequence = received_event.data.btn_mode;
+                break;
+            default:
+                break;
+        }
+    }
+
+    if (!mode_sequence) {
+        return;
+    }
 
     switch(state)
     {
@@ -39,7 +57,16 @@ void Task_Sequence(void) {
 }
 
 void Task_Flash(void) {
-    // Not implemented yet
+    static bool button_mode = false;
+
+    Scheduler_Delay(3000);
+    button_mode = !button_mode;
+
+    event_t example_event;
+    example_event.id = EVENT_BTN_MODE;
+    example_event.data.btn_mode = button_mode;
+
+    Task_SendEvent(TASK_SEQUENCE, &example_event);
 }
 
 void Task_Execute(task_id_t task_id) {
@@ -53,4 +80,22 @@ void Task_Execute(task_id_t task_id) {
         default:
             break;
     }
+}
+
+bool Task_SendEvent(task_id_t task_id, event_t *event) {
+    __disable_irq();
+
+    bool result = EventBuffer_Push(&event_buffers[task_id], event);
+
+    __enable_irq();
+    return result;
+}
+
+bool Task_ReadEvent(task_id_t task_id, event_t *output_event) {
+    __disable_irq();
+
+    bool result = EventBuffer_Pop(&event_buffers[task_id], output_event);
+
+    __enable_irq();
+    return result;
 }
