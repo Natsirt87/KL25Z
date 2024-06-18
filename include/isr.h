@@ -8,6 +8,6 @@
 
 #include "board_config.h"
 
-void PORTA_IQRHandler(void);
+void PORTA_IRQHandler(void);
 
 #endif

@@ -15,7 +15,7 @@ void Task_Flash(void);
 
 void Task_Execute(task_id_t task_id);
 bool Task_SendEvent(task_id_t task_id, event_t *event);
-// TODO: MulticastEvent function that sends event to all buffers
+bool Task_MulticastEvent(event_t *event);
 bool Task_ReadEvent(task_id_t task_id, event_t *output_event);
 
 #endif

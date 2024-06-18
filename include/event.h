@@ -6,7 +6,6 @@
 #include <stdint.h>
 
 typedef enum {
-    EVENT_NONE,
     EVENT_BTN_MODE,
     EVENT_BTN_TIMING,
     EVENT_SENSOR_READ

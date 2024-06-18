@@ -8,8 +8,8 @@ void EventBuffer_Init(event_buffer_t *buffer) {
 bool EventBuffer_Push(event_buffer_t *buffer, event_t *event) {
     uint8_t next_head = (buffer->head + 1) % EVENT_BUFFER_SIZE;
     if (next_head == buffer->tail) {
-        // Buffer is full
-        return false;
+        // Buffer is full, advance tail to overwrite the oldest entry
+        buffer->tail = (buffer->tail + 1) % EVENT_BUFFER_SIZE;
     }
     buffer->events[buffer->head] = *event;
     buffer->head = next_head;
