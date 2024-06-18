@@ -1,7 +1,8 @@
-#include "../platform/MKL25Z4/include/MKL25Z4.h";
+#include "../platform/MKL25Z4/include/MKL25Z4.h"
 #include "task.h"
 #include "util.h"
 #include "debug.h"
+#include "scheduler.h"
 
 static event_buffer_t event_buffers[NUM_TASKS];
 
@@ -12,19 +13,28 @@ static event_buffer_t event_buffers[NUM_TASKS];
 */
 
 void Task_Sequence(void) {
-    static bool mode_sequence = true;
     static enum {ST_RED, ST_GREEN, ST_BLUE} state;
+
+    static bool mode_sequence = true;
+    static uint32_t wait_time = 1000;
+    
     
     event_t received_event;
 
-    // Read each event in event buffer
-    // Switch on event id, read data accordingly & perform action
-    // Set mode_sequence here
+    // Read all incoming events & react accordingly
     while(Task_ReadEvent(TASK_SEQUENCE, &received_event)) {
         switch (received_event.id) {
             case EVENT_BTN_MODE:
+                Debug_Printf("Task Sequence reading event EVENT_BTN_MODE with data %d\r\n", received_event.data.btn_mode);
                 mode_sequence = received_event.data.btn_mode == 0;
                 break;
+            case EVENT_BTN_TIMING:
+                Debug_Printf("Task Sequence reading event EVENT_BTN_MODE with data %d\r\n", received_event.data.btn_timing);
+                if (received_event.data.btn_timing == 0) {
+                    wait_time = 1000;
+                } else {
+                    wait_time = 500;
+                }
             default:
                 break;
         }
@@ -38,20 +48,20 @@ void Task_Sequence(void) {
     {
         case ST_RED:
             Util_ControlOnboardLED(1, 0, 0);
-            Debug_Print("Stage RED\r\n");
-            Scheduler_Delay(1000);
+            Debug_Println("Stage RED");
+            Scheduler_Delay(wait_time);
             state = ST_GREEN;
             break;
         case ST_GREEN:
             Util_ControlOnboardLED(0, 1, 0);
-            Debug_Print("Stage GREEN\r\n");
-            Scheduler_Delay(1000);
+            Debug_Println("Stage GREEN");
+            Scheduler_Delay(wait_time);
             state = ST_BLUE;
             break;
         case ST_BLUE:
             Util_ControlOnboardLED(0, 0, 1);
-            Debug_Print("Stage BLUE\r\n");
-            Scheduler_Delay(1000);
+            Debug_Println("Stage BLUE");
+            Scheduler_Delay(wait_time);
             
             state = ST_RED;
             break;
@@ -61,32 +71,51 @@ void Task_Sequence(void) {
     }
 }
 
-void Task_SwitchMode(void) {
-    static bool button_mode = 0;
-
-    Scheduler_Delay(3000);
-    button_mode = !button_mode;
-
-    event_t example_event;
-    example_event.id = EVENT_BTN_MODE;
-    example_event.data.btn_mode = button_mode;
-
-    Task_SendEvent(TASK_SEQUENCE, &example_event);
-}
-
 void Task_Flash(void) {
-    bool mode_flash = false;
-    enum {ST_ON, ST_OFF} state;
+    static bool mode_flash = false;
+    static uint32_t wait_time = 500;
+
+    static enum {ST_ON, ST_OFF} state;
+
+    
 
     event_t received_event;
-
-    while(Task_ReadEvent(TASK_FLASH, &received_event)) {
+    while (Task_ReadEvent(TASK_FLASH, &received_event)) {
         switch (received_event.id) {
             case EVENT_BTN_MODE:
+                Debug_Printf("Task Flash reading event EVENT_BTN_MODE with data %d\r\n", received_event.data.btn_mode);
+                mode_flash = received_event.data.btn_mode == 1;
                 break;
-            default:
-                break;
+            case EVENT_BTN_TIMING:
+                Debug_Printf("Task Flash reading event EVENT_BTN_TIMING with data %d\r\n", received_event.data.btn_timing);
+                if (received_event.data.btn_timing == 0) {
+                    wait_time = 500;
+                } else {
+                    wait_time = 200;
+                }
         }
+    }
+
+    if (!mode_flash) {
+        return;
+    }
+
+    switch (state) {
+        case ST_ON:
+            Util_ControlOnboardLED(1, 0, 1);
+            Scheduler_Delay(wait_time);
+            Debug_Println("Flash ON");
+            state = ST_OFF;
+            break;
+        case ST_OFF:
+            Util_ControlOnboardLED(0, 0, 0);
+            Scheduler_Delay(wait_time);
+            Debug_Println("Flash OFF");
+            state = ST_ON;
+            break;
+        default:
+            state = ST_ON;
+            break;
     }
 }
 

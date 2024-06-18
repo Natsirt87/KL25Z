@@ -20,18 +20,19 @@ rule flash
 rule clean
   command = rm -rf build/*
   description = Cleaning build files
-build build/util.o : cc src/util.c | include/event_buffer.h include/task.h include/debug.h include/board_config.h include/event.h include/scheduler.h include/util.h include/systick.h
-build build/systick.o : cc src/systick.c | include/event_buffer.h include/task.h include/debug.h include/board_config.h include/event.h include/scheduler.h include/util.h include/systick.h
-build build/task.o : cc src/task.c | include/event_buffer.h include/task.h include/debug.h include/board_config.h include/event.h include/scheduler.h include/util.h include/systick.h
-build build/debug.o : cc src/debug.c | include/event_buffer.h include/task.h include/debug.h include/board_config.h include/event.h include/scheduler.h include/util.h include/systick.h
-build build/event_buffer.o : cc src/event_buffer.c | include/event_buffer.h include/task.h include/debug.h include/board_config.h include/event.h include/scheduler.h include/util.h include/systick.h
-build build/main.o : cc src/main.c | include/event_buffer.h include/task.h include/debug.h include/board_config.h include/event.h include/scheduler.h include/util.h include/systick.h
-build build/scheduler.o : cc src/scheduler.c | include/event_buffer.h include/task.h include/debug.h include/board_config.h include/event.h include/scheduler.h include/util.h include/systick.h
+build build/debug.o : cc src/debug.c | include/event.h include/isr.h include/task.h include/event_buffer.h include/board_config.h include/systick.h include/scheduler.h include/debug.h include/util.h
+build build/isr.o : cc src/isr.c | include/event.h include/isr.h include/task.h include/event_buffer.h include/board_config.h include/systick.h include/scheduler.h include/debug.h include/util.h
+build build/task.o : cc src/task.c | include/event.h include/isr.h include/task.h include/event_buffer.h include/board_config.h include/systick.h include/scheduler.h include/debug.h include/util.h
+build build/systick.o : cc src/systick.c | include/event.h include/isr.h include/task.h include/event_buffer.h include/board_config.h include/systick.h include/scheduler.h include/debug.h include/util.h
+build build/util.o : cc src/util.c | include/event.h include/isr.h include/task.h include/event_buffer.h include/board_config.h include/systick.h include/scheduler.h include/debug.h include/util.h
+build build/scheduler.o : cc src/scheduler.c | include/event.h include/isr.h include/task.h include/event_buffer.h include/board_config.h include/systick.h include/scheduler.h include/debug.h include/util.h
+build build/event_buffer.o : cc src/event_buffer.c | include/event.h include/isr.h include/task.h include/event_buffer.h include/board_config.h include/systick.h include/scheduler.h include/debug.h include/util.h
+build build/main.o : cc src/main.c | include/event.h include/isr.h include/task.h include/event_buffer.h include/board_config.h include/systick.h include/scheduler.h include/debug.h include/util.h
 build build/system_MKL25Z4.o : cc platform/system_MKL25Z4.c
 build build/startup.o : cc platform/startup.c
 build build/startup_MKL25Z4.o : cc platform/MKL25Z4/startup/gcc/startup_MKL25Z4.S
 build build/lib_MKL25Z4.a : pack build/startup.o build/system_MKL25Z4.o build/startup_MKL25Z4.o
-build build/main.elf : link build/util.o build/systick.o build/task.o build/debug.o build/event_buffer.o build/main.o build/scheduler.o build/startup.o build/system_MKL25Z4.o build/startup_MKL25Z4.o build/lib_MKL25Z4.a
+build build/main.elf : link build/debug.o build/isr.o build/task.o build/systick.o build/util.o build/scheduler.o build/event_buffer.o build/main.o build/startup.o build/system_MKL25Z4.o build/startup_MKL25Z4.o build/lib_MKL25Z4.a
 build build/main.bin : tobinary build/main.elf
 build flash : flash build/main.bin
 build clean: clean

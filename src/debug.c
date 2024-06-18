@@ -64,6 +64,32 @@ void Debug_Print(const char *str) {
     }
 }
 
+void Debug_Println(const char *str) {
+    // Determine the length of the input string
+    int length = 0;
+    while (str[length] != '\0') {
+        length++;
+    }
+    
+    // Create a buffer on the stack with enough space for the new string
+    // Input length + 2 for "\r\n" + 1 for null terminator
+    char buffer[length + 3];
+
+    // Copy the input string to the buffer
+    for (int i = 0; i < length; i++) {
+        buffer[i] = str[i];
+    }
+
+    // Add "\r\n" to the end of the buffer
+    buffer[length] = '\r';
+    buffer[length + 1] = '\n';
+
+    // Null-terminate the new string
+    buffer[length + 2] = '\0';
+
+    Debug_Print(buffer);
+}
+
 void Debug_Printf(const char* format, ...) {
     char buffer[256]; // Assuming a maximum buffer size of 256
     char* buf_ptr = buffer;

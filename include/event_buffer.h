@@ -2,6 +2,9 @@
     Circular event buffer for handling task-based event handling & communication 
 */
 
+#ifndef EVENT_BUFFER_H
+#define EVENT_BUFFER_H
+
 #include <stdbool.h>
 #include "event.h"
 
@@ -16,3 +19,5 @@ typedef struct {
 void EventBuffer_Init(event_buffer_t *buffer);
 bool EventBuffer_Push(event_buffer_t *buffer, event_t *event);
 bool EventBuffer_Pop(event_buffer_t *buffer, event_t *event);
+
+#endif

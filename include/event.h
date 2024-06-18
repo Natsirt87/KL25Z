@@ -1,4 +1,8 @@
 // Definitions for event type
+
+#ifndef EVENT_H
+#define EVENT_H
+
 #include <stdint.h>
 
 typedef enum {
@@ -26,3 +30,5 @@ typedef struct {
         } sensor_read;
     } data;
 } event_t;
+
+#endif
