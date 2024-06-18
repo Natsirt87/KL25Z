@@ -14,8 +14,7 @@
 #define BTN1_POS 13
 #define BTN2_POS 16
 
-#define BTN1_PORT PORTA
-#define BTN2_PORT PORTA
+#define BTN_PORT PORTA
 
 // GPIO definitions
 #define BTN1_GPIO PTA

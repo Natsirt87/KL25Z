@@ -5,10 +5,15 @@
 
 static event_buffer_t event_buffers[NUM_TASKS];
 
+/* 
+    TODO: Split each task into it's own file. 
+    Make each state it's own function, and use a separate function to process each event. 
+    Keep static variables in the file.
+*/
+
 void Task_Sequence(void) {
-    // Finite state machine, performs one state at a time then returns
+    static bool mode_sequence = true;
     static enum {ST_RED, ST_GREEN, ST_BLUE} state;
-    static bool mode_sequence = false;
     
     event_t received_event;
 
@@ -18,7 +23,7 @@ void Task_Sequence(void) {
     while(Task_ReadEvent(TASK_SEQUENCE, &received_event)) {
         switch (received_event.id) {
             case EVENT_BTN_MODE:
-                mode_sequence = received_event.data.btn_mode;
+                mode_sequence = received_event.data.btn_mode == 0;
                 break;
             default:
                 break;
@@ -56,8 +61,8 @@ void Task_Sequence(void) {
     }
 }
 
-void Task_Flash(void) {
-    static bool button_mode = false;
+void Task_SwitchMode(void) {
+    static bool button_mode = 0;
 
     Scheduler_Delay(3000);
     button_mode = !button_mode;
@@ -67,6 +72,22 @@ void Task_Flash(void) {
     example_event.data.btn_mode = button_mode;
 
     Task_SendEvent(TASK_SEQUENCE, &example_event);
+}
+
+void Task_Flash(void) {
+    bool mode_flash = false;
+    enum {ST_ON, ST_OFF} state;
+
+    event_t received_event;
+
+    while(Task_ReadEvent(TASK_FLASH, &received_event)) {
+        switch (received_event.id) {
+            case EVENT_BTN_MODE:
+                break;
+            default:
+                break;
+        }
+    }
 }
 
 void Task_Execute(task_id_t task_id) {

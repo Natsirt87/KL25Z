@@ -1,6 +1,5 @@
 // Definitions for event type
 #include <stdint.h>
-#include <stdbool.h>
 
 typedef enum {
     EVENT_NONE,
@@ -11,10 +10,16 @@ typedef enum {
 
 typedef struct {
     event_id_t id;
+
+    // Each possible field is named after the corresponding event id
     union {
-        // Each possible field is named after the corresponding event id
-        bool btn_mode; // true = flash, false = sequence
-        bool btn_timing; // true = fast, false = slow
+        // 0 = sequence, 1 = flash
+        uint8_t btn_mode; 
+
+        // 0 = slow, 1 = fast
+        uint8_t btn_timing; 
+
+        // Example of complex data
         struct {
             uint32_t sensor_data1;
             uint32_t sensor_data2;

@@ -11,8 +11,8 @@ void GPIO_Init(void) {
     SIM->SCGC5 |= SCGC5_MASK;
 
     // Configure buttons as GPIO w/ pull-up resistors
-    BTN1_PORT->PCR[BTN1_POS] = PORT_PCR_MUX(1) | PORT_PCR_PE_MASK | PORT_PCR_PS_MASK;
-    BTN2_PORT->PCR[BTN2_POS] = PORT_PCR_MUX(1) | PORT_PCR_PE_MASK | PORT_PCR_PS_MASK;
+    BTN_PORT->PCR[BTN1_POS] = PORT_PCR_MUX(1) | PORT_PCR_PE_MASK | PORT_PCR_PS_MASK;
+    BTN_PORT->PCR[BTN2_POS] = PORT_PCR_MUX(1) | PORT_PCR_PE_MASK | PORT_PCR_PS_MASK;
 
     // Configure button GPIO as input
     BTN1_GPIO->PDDR &= ~MASK(BTN1_POS);
@@ -21,8 +21,8 @@ void GPIO_Init(void) {
 
 void Interrupt_Init(void) {
     // Configure button interrupts on either edge
-    BTN1_PORT->PCR[BTN1_POS] |= PORT_PCR_IRQC(11); // Set interrupt on either edge
-    BTN2_PORT->PCR[BTN2_POS] |= PORT_PCR_IRQC(11); // Set interrupt on either edge
+    BTN_PORT->PCR[BTN1_POS] |= PORT_PCR_IRQC(11); // Set interrupt on either edge
+    BTN_PORT->PCR[BTN2_POS] |= PORT_PCR_IRQC(11); // Set interrupt on either edge
 
     NVIC_SetPriority(BTN_IRQn, 2);
     NVIC_EnableIRQ(BTN_IRQn);

@@ -2,6 +2,7 @@
     Circular event buffer for handling task-based event handling & communication 
 */
 
+#include <stdbool.h>
 #include "event.h"
 
 #define EVENT_BUFFER_SIZE 10
