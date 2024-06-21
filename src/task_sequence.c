@@ -1,4 +1,4 @@
-#include "task_sequence.h"
+#include "task_defs.h"
 #include "task.h"
 #include "debug.h"
 #include "util.h"
@@ -60,7 +60,6 @@ static void HandleEvent(event_t *received_event) {
 
             mode_sequence = received_event->data.btn_mode == 0;
             break;
-
         case EVENT_BTN_TIMING:
             Debug_Printf("Task Sequence reading event EVENT_BTN_MODE with data %d\r\n", received_event->data.btn_timing);
 
@@ -70,7 +69,6 @@ static void HandleEvent(event_t *received_event) {
                 wait_time = 500;
             }
             break;
-
         default:
             break;
     }

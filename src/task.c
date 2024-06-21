@@ -1,9 +1,8 @@
 #include "../platform/MKL25Z4/include/MKL25Z4.h"
 #include "task.h"
-#include "task_sequence.h"
-#include "task_flash.h"
+#include "task_defs.h"
 
-static event_buffer_t event_buffers[NUM_TASKS];
+static volatile event_buffer_t event_buffers[NUM_TASKS];
 
 void Task_Execute(task_id_t task_id) {
     switch (task_id) {
@@ -13,6 +12,8 @@ void Task_Execute(task_id_t task_id) {
         case TASK_FLASH:
             Task_Flash();
             break;
+        case TASK_DIM:
+            Task_Dim();
         default:
             break;
     }

@@ -1,4 +1,4 @@
-#include "task_flash.h"
+#include "task_defs.h"
 #include "task.h"
 #include "debug.h"
 #include "util.h"
@@ -51,7 +51,6 @@ static void HandleEvent(event_t *received_event) {
 
             mode_flash = received_event->data.btn_mode == 1;
             break;
-
         case EVENT_BTN_TIMING:
             Debug_Printf("Task Flash reading event EVENT_BTN_TIMING with data %d\r\n", received_event->data.btn_timing);
 
@@ -60,5 +59,7 @@ static void HandleEvent(event_t *received_event) {
             } else {
                 wait_time = 200;
             }
+        default:
+            break;
     }
 }

@@ -67,8 +67,9 @@ int main(void) {
 
     Scheduler_Init();
 
-    Scheduler_AddTask(TASK_SEQUENCE);
-    Scheduler_AddTask(TASK_FLASH);
+    /* Scheduler_AddTask(TASK_SEQUENCE);
+    Scheduler_AddTask(TASK_FLASH); */
+    Scheduler_AddTask(TASK_DIM);
 
     Scheduler_Run();
 
