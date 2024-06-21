@@ -6,7 +6,6 @@
 typedef enum {
     TASK_FLASH,
     TASK_SEQUENCE,
-    TASK_DIM,
     // Put new task ids here
     NUM_TASKS // Represents the number of unique tasks
 } task_id_t;

@@ -59,17 +59,13 @@ int main(void) {
     Debug_Init(57600);
     Util_InitOnboardLED();
 
-    // Intialize onboard LED to off & print current system clock speed
-    Util_ControlOnboardLED(0, 0, 0);
     Debug_Printf("System core clock: %d \r\n", SystemCoreClock);
 
-    // Scheduler initialization & setup
 
     Scheduler_Init();
 
-    /* Scheduler_AddTask(TASK_SEQUENCE);
-    Scheduler_AddTask(TASK_FLASH); */
-    Scheduler_AddTask(TASK_DIM);
+    Scheduler_AddTask(TASK_SEQUENCE);
+    Scheduler_AddTask(TASK_FLASH);
 
     Scheduler_Run();
 

@@ -8,10 +8,10 @@ static uint32_t GetPortMask(PORT_Type *port);
 static uint32_t GetTPMMask(TPM_Type *tpm);
 static uint32_t MsToTicks(uint32_t ms);
 
-bool PWM_Output_Init(pwm_config_t *config, PORT_Type *port, uint8_t pin, uint8_t mux) {
-
-    port->PCR[pin] |= PORT_PCR_MUX(mux);
+bool PWM_Output_Init(pwm_config_t *config, PORT_Type *port, uint8_t pin, uint8_t mux, double init_value) {
+    
     SIM_SCGC5 |= GetPortMask(port);
+    port->PCR[pin] |= PORT_PCR_MUX(mux);
 
     SIM->SOPT2 |= SIM_SOPT2_TPMSRC(1);
     SIM->SCGC6 |= GetTPMMask(config->tpm);
@@ -25,8 +25,8 @@ bool PWM_Output_Init(pwm_config_t *config, PORT_Type *port, uint8_t pin, uint8_t
     // Edge aligned mode
     config->tpm->CONTROLS[config->tpm_ch].CnSC = TPM_CnSC_MSB_MASK | TPM_CnSC_ELSB_MASK;
 
-    // Output to 0
-    config->tpm->CONTROLS[config->tpm_ch].CnV = 0;
+    // Output to init value
+    PWM_Write(config, init_value);
 
     // Enable TPM and set center-aligned disabled
     config->tpm->SC |= TPM_SC_CPWMS(0) | TPM_SC_CMOD(1);
@@ -39,6 +39,8 @@ void PWM_Write(pwm_config_t *config, double value) {
     uint32_t min_ticks = MsToTicks(config->duty_cycle_min);
 
     uint32_t duty_cycle = (uint32_t)(value * (max_ticks - min_ticks)) + min_ticks;
+
+    Debug_Printf("Writing %d to duty cycle, with min: %d and max: %d", duty_cycle, min_ticks, max_ticks);
 
     config->tpm->CONTROLS[config->tpm_ch].CnV = duty_cycle;
 }

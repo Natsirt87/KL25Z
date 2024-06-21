@@ -25,14 +25,14 @@ void Task_Flash(void) {
     switch (state) {
         case ST_ON:
             Debug_Println("Flash ON");
-            Util_ControlOnboardLED(1, 0, 1);
+            Util_SetOnboardLED(0.1, 0.05, 0.1);
             
             state = ST_OFF;
             Scheduler_Delay(wait_time);
             break;
         case ST_OFF:
             Debug_Println("Flash OFF");
-            Util_ControlOnboardLED(0, 0, 0);
+            Util_SetOnboardLED(0.01, 0.0, 0.01);
             
             state = ST_ON;
             Scheduler_Delay(wait_time);

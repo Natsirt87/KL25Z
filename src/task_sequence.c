@@ -27,21 +27,21 @@ void Task_Sequence(void) {
     {
         case ST_RED:
             Debug_Println("Stage RED");
-            Util_ControlOnboardLED(1, 0, 0);
+            Util_SetOnboardLED(0.05, 0.0, 0.0);
             
             state = ST_GREEN;
             Scheduler_Delay(wait_time);
             break;
         case ST_GREEN:
             Debug_Println("Stage GREEN");
-            Util_ControlOnboardLED(0, 1, 0);
+            Util_SetOnboardLED(0.0, 0.1, 0.0);
             
             state = ST_BLUE;
             Scheduler_Delay(wait_time);
             break;
         case ST_BLUE:
             Debug_Println("Stage BLUE");
-            Util_ControlOnboardLED(0, 0, 1);
+            Util_SetOnboardLED(0.0, 0.0, 0.2);
             
             state = ST_RED;
             Scheduler_Delay(wait_time);

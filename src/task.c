@@ -12,8 +12,6 @@ void Task_Execute(task_id_t task_id) {
         case TASK_FLASH:
             Task_Flash();
             break;
-        case TASK_DIM:
-            Task_Dim();
         default:
             break;
     }

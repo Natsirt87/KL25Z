@@ -12,7 +12,7 @@ typedef struct {
     uint32_t duty_cycle_max; // In ms
 } pwm_config_t;
 
-bool PWM_Output_Init(pwm_config_t *config, PORT_Type *port, uint8_t pin, uint8_t mux);
+bool PWM_Output_Init(pwm_config_t *config, PORT_Type *port, uint8_t pin, uint8_t mux, double init_value);
 void PWM_Write(pwm_config_t *config, double value);
 
 #endif
